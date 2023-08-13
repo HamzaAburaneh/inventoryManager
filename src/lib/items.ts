@@ -39,6 +39,11 @@ export async function editItemBarcode(id: string, newBarcode: string): Promise<v
 	const itemDoc = doc(db, 'items', id);
 	await updateDoc(itemDoc, { barcode: newBarcode });
 }
+//edit item storage type
+export async function editItemStorageType(id: string, newStorageType: string): Promise<void> {
+	const itemDoc = doc(db, 'items', id);
+	await updateDoc(itemDoc, { storageType: newStorageType });
+}
 
 export async function searchItems(name: string): Promise<Item[]> {
 	const itemsQuery = name

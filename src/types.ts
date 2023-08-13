@@ -5,6 +5,8 @@ export interface Item {
     count: number;
     lowCount: null| number;
     cost: null| number;
+    storageType: '' | 'freezer' | 'refrigerator' | 'dry storage';
+    [key: string]: any;  // index signature
   }
   
   export interface Transaction {
