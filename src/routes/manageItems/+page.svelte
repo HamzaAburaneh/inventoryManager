@@ -56,13 +56,12 @@
 		cost = null;
 		storageType = '';
 
-		items = applySorting(items, currentSortColumn, sortAscending);
+		updateItemsAndSort(await getItems());
 	}
 
 	async function handleDelete(id: string) {
 		await deleteItem(id);
-		items = await getItems();
-		items = applySorting(items, currentSortColumn, sortAscending);
+		updateItemsAndSort(items.filter((item) => item.id !== id));
 	}
 
 	async function handleEditCost(id: string, oldCost: number | null) {
@@ -87,7 +86,7 @@
 			},
 			allowOutsideClick: () => !Swal.isLoading()
 		});
-		items = applySorting(items, currentSortColumn, sortAscending);
+		updateItemsAndSort(await getItems());
 	}
 
 	async function handleEditBarcode(id: string, oldBarcode: string) {
@@ -109,7 +108,7 @@
 			},
 			allowOutsideClick: () => !Swal.isLoading()
 		});
-		items = applySorting(items, currentSortColumn, sortAscending);
+		updateItemsAndSort(await getItems());
 	}
 
 	//handle editname function which opens an input box to edit the name of an item and make the prompt styles look better using sweetalert2
@@ -132,7 +131,7 @@
 			},
 			allowOutsideClick: () => !Swal.isLoading()
 		});
-		items = applySorting(items, currentSortColumn, sortAscending);
+		updateItemsAndSort(await getItems());
 	}
 	//handle editStorageType function which opens an input box to edit the storage type of an item and make the prompt styles look better using sweetalert2
 	async function handleEditStorageType(id: string, oldStorageType: string) {
@@ -154,7 +153,7 @@
 			},
 			allowOutsideClick: () => !Swal.isLoading()
 		});
-		items = applySorting(items, currentSortColumn, sortAscending);
+		updateItemsAndSort(await getItems());
 	}
 
 	async function handleEditLowCount(id: string, oldLowCount: number | null) {
@@ -180,21 +179,24 @@
 			},
 			allowOutsideClick: () => !Swal.isLoading()
 		});
-		items = applySorting(items, currentSortColumn, sortAscending);
+		updateItemsAndSort(await getItems());
 	}
 
 	async function handleSearch() {
 		items = await searchItems(searchValue);
-		items = applySorting(items, currentSortColumn, sortAscending);
+		updateItemsAndSort(await getItems());
 	}
-	function sortBy(column: keyof Item) {
+	async function sortBy(column: keyof Item) {
 		if (currentSortColumn === column) {
 			sortAscending = !sortAscending;
 		} else {
 			currentSortColumn = column;
 			sortAscending = true;
 		}
-		items = applySorting(items, currentSortColumn, sortAscending);
+		updateItemsAndSort(await getItems());
+	}
+	function updateItemsAndSort(updatedItems: Item[]) {
+		items = applySorting(updatedItems, currentSortColumn, sortAscending);
 	}
 </script>
 
