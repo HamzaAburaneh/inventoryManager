@@ -51,3 +51,16 @@ export async function searchItems(name: string): Promise<Item[]> {
 	const snapshot = await getDocs(itemsQuery);
 	return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() } as Item));
 }
+
+export function sortItems<T>(items: T[], column: keyof T, ascending: boolean): T[] {
+    return items.sort((a, b) => {
+        if (a[column] < b[column]) return ascending ? -1 : 1;
+        if (a[column] > b[column]) return ascending ? 1 : -1;
+        return 0;
+    });
+}
+
+export function applySorting(items: Item[], column: keyof Item, ascending: boolean): Item[] {
+    return sortItems(items, column, ascending);
+}
+
