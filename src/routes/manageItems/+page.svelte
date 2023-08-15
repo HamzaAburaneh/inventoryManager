@@ -9,7 +9,8 @@
 		editItemLowCount,
 		editItemName,
 		editItemBarcode,
-		editItemStorageType
+		editItemStorageType,
+		applySorting
 	} from '../../lib/items';
 	import type { Item } from '../../types';
 	import Swal from 'sweetalert2';
@@ -54,11 +55,14 @@
 		lowCount = null;
 		cost = null;
 		storageType = '';
+
+		items = applySorting(items, currentSortColumn, sortAscending);
 	}
 
 	async function handleDelete(id: string) {
 		await deleteItem(id);
 		items = await getItems();
+		items = applySorting(items, currentSortColumn, sortAscending);
 	}
 
 	async function handleEditCost(id: string, oldCost: number | null) {
@@ -83,6 +87,7 @@
 			},
 			allowOutsideClick: () => !Swal.isLoading()
 		});
+		items = applySorting(items, currentSortColumn, sortAscending);
 	}
 
 	async function handleEditBarcode(id: string, oldBarcode: string) {
@@ -104,6 +109,7 @@
 			},
 			allowOutsideClick: () => !Swal.isLoading()
 		});
+		items = applySorting(items, currentSortColumn, sortAscending);
 	}
 
 	//handle editname function which opens an input box to edit the name of an item and make the prompt styles look better using sweetalert2
@@ -126,6 +132,7 @@
 			},
 			allowOutsideClick: () => !Swal.isLoading()
 		});
+		items = applySorting(items, currentSortColumn, sortAscending);
 	}
 	//handle editStorageType function which opens an input box to edit the storage type of an item and make the prompt styles look better using sweetalert2
 	async function handleEditStorageType(id: string, oldStorageType: string) {
@@ -147,6 +154,7 @@
 			},
 			allowOutsideClick: () => !Swal.isLoading()
 		});
+		items = applySorting(items, currentSortColumn, sortAscending);
 	}
 
 	async function handleEditLowCount(id: string, oldLowCount: number | null) {
@@ -172,28 +180,21 @@
 			},
 			allowOutsideClick: () => !Swal.isLoading()
 		});
+		items = applySorting(items, currentSortColumn, sortAscending);
 	}
 
 	async function handleSearch() {
 		items = await searchItems(searchValue);
+		items = applySorting(items, currentSortColumn, sortAscending);
 	}
 	function sortBy(column: keyof Item) {
-		console.log('Sorting by:', column);
-
 		if (currentSortColumn === column) {
-			sortAscending = !sortAscending; // Toggle the sorting direction
+			sortAscending = !sortAscending;
 		} else {
 			currentSortColumn = column;
-			sortAscending = true; // Default to ascending when switching columns
+			sortAscending = true;
 		}
-
-		items = items.sort((a, b) => {
-			const keyA = a[column as string];
-			const keyB = b[column as string];
-			if (keyA < keyB) return sortAscending ? -1 : 1;
-			if (keyA > keyB) return sortAscending ? 1 : -1;
-			return 0;
-		});
+		items = applySorting(items, currentSortColumn, sortAscending);
 	}
 </script>
 
