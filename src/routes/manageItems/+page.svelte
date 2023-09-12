@@ -47,21 +47,26 @@
 			...itemWithoutId
 		};
 
-		items = [...items, item];
+		// Instead of just appending the new item, we'll insert it into the already sorted list
+		let updatedItems = [...items, item];
+		updatedItems = applySorting(updatedItems, currentSortColumn, sortAscending);
 
+		// Update the local state
+		updateItemsAndSort(updatedItems);
+
+		// Clear the input fields
 		name = '';
 		barcode = '';
 		count = 0;
 		lowCount = null;
 		cost = null;
 		storageType = '';
-
-		updateItemsAndSort(await getItems());
 	}
 
 	async function handleDelete(id: string) {
 		await deleteItem(id);
-		updateItemsAndSort(items.filter((item) => item.id !== id));
+		const updatedItems = items.filter((item) => item.id !== id);
+		updateItemsAndSort(updatedItems);
 	}
 
 	async function handleEditCost(id: string, oldCost: number | null) {
@@ -76,17 +81,24 @@
 				autocapitalize: 'off'
 			},
 			showCancelButton: true,
-			confirmButtonText: 'Edit',
+			confirmButtonText: 'Confirm',
 			showLoaderOnConfirm: true,
 			preConfirm: async (newCost) => {
 				if (newCost) {
 					await editItemCost(id, Number(newCost));
-					items = await getItems();
+
+					const updatedItems = items.map((item) => {
+						if (item.id === id) {
+							return { ...item, cost: Number(newCost) };
+						}
+						return item;
+					});
+
+					updateItemsAndSort(updatedItems);
 				}
 			},
 			allowOutsideClick: () => !Swal.isLoading()
 		});
-		updateItemsAndSort(await getItems());
 	}
 
 	async function handleEditBarcode(id: string, oldBarcode: string) {
@@ -98,20 +110,26 @@
 				autocapitalize: 'off'
 			},
 			showCancelButton: true,
-			confirmButtonText: 'Edit',
+			confirmButtonText: 'Confirm',
 			showLoaderOnConfirm: true,
 			preConfirm: async (newBarcode) => {
 				if (newBarcode) {
 					await editItemBarcode(id, newBarcode);
-					items = await getItems();
+
+					const updatedItems = items.map((item) => {
+						if (item.id === id) {
+							return { ...item, barcode: newBarcode };
+						}
+						return item;
+					});
+
+					updateItemsAndSort(updatedItems);
 				}
 			},
 			allowOutsideClick: () => !Swal.isLoading()
 		});
-		updateItemsAndSort(await getItems());
 	}
 
-	//handle editname function which opens an input box to edit the name of an item and make the prompt styles look better using sweetalert2
 	async function handleEditName(id: string, oldName: string) {
 		await Swal.fire({
 			title: 'Edit Name',
@@ -121,43 +139,61 @@
 				autocapitalize: 'off'
 			},
 			showCancelButton: true,
-			confirmButtonText: 'Edit',
+			confirmButtonText: 'Confirm',
 			showLoaderOnConfirm: true,
 			preConfirm: async (newName) => {
 				if (newName) {
 					await editItemName(id, newName);
-					items = await getItems();
+
+					const updatedItems = items.map((item) => {
+						if (item.id === id) {
+							return { ...item, name: newName };
+						}
+						return item;
+					});
+
+					updateItemsAndSort(updatedItems);
 				}
 			},
 			allowOutsideClick: () => !Swal.isLoading()
 		});
-		updateItemsAndSort(await getItems());
 	}
-	//handle editStorageType function which opens an input box to edit the storage type of an item and make the prompt styles look better using sweetalert2
+
 	async function handleEditStorageType(id: string, oldStorageType: string) {
 		await Swal.fire({
 			title: 'Edit Storage Type',
-			input: 'text',
-			inputValue: oldStorageType,
+			input: 'select',
+			inputOptions: {
+				'': 'Select Storage Type',
+				Dry: 'Dry Storage',
+				Refrigerator: 'Refrigerator',
+				Freezer: 'Freezer'
+			},
 			inputAttributes: {
 				autocapitalize: 'off'
 			},
 			showCancelButton: true,
-			confirmButtonText: 'Edit',
+			confirmButtonText: 'Confirm',
 			showLoaderOnConfirm: true,
 			preConfirm: async (newStorageType) => {
 				if (newStorageType) {
 					await editItemStorageType(id, newStorageType);
-					items = await getItems();
+
+					const updatedItems = items.map((item) => {
+						if (item.id === id) {
+							return { ...item, storageType: newStorageType };
+						}
+						return item;
+					});
+
+					updateItemsAndSort(updatedItems);
 				}
 			},
 			allowOutsideClick: () => !Swal.isLoading()
 		});
-		updateItemsAndSort(await getItems());
 	}
 
 	async function handleEditLowCount(id: string, oldLowCount: number | null) {
-		//if oldLowCount is null you should still be able to edit the lowcount
 		if (oldLowCount == null) {
 			oldLowCount = 0;
 		}
@@ -169,23 +205,31 @@
 				autocapitalize: 'off'
 			},
 			showCancelButton: true,
-			confirmButtonText: 'Edit',
+			confirmButtonText: 'Confirm',
 			showLoaderOnConfirm: true,
 			preConfirm: async (newLowCount) => {
 				if (newLowCount) {
 					await editItemLowCount(id, Number(newLowCount));
-					items = await getItems();
+
+					const updatedItems = items.map((item) => {
+						if (item.id === id) {
+							return { ...item, lowCount: Number(newLowCount) };
+						}
+						return item;
+					});
+
+					updateItemsAndSort(updatedItems);
 				}
 			},
 			allowOutsideClick: () => !Swal.isLoading()
 		});
-		updateItemsAndSort(await getItems());
 	}
 
 	async function handleSearch() {
-		items = await searchItems(searchValue);
-		updateItemsAndSort(await getItems());
+		const searchedItems = await searchItems(searchValue);
+		updateItemsAndSort(searchedItems);
 	}
+
 	async function sortBy(column: keyof Item) {
 		if (currentSortColumn === column) {
 			sortAscending = !sortAscending;
@@ -193,8 +237,9 @@
 			currentSortColumn = column;
 			sortAscending = true;
 		}
-		updateItemsAndSort(await getItems());
+		updateItemsAndSort(items);
 	}
+
 	function updateItemsAndSort(updatedItems: Item[]) {
 		items = applySorting(updatedItems, currentSortColumn, sortAscending);
 	}
@@ -236,9 +281,9 @@
 			<label for="storageType" class="form-label">Storage type</label>
 			<select id="storageType" bind:value={storageType} class="form-control">
 				<option value="">Select storage type...</option>
-				<option value="freezer">Freezer</option>
-				<option value="refrigerator">Refrigerator</option>
-				<option value="dry storage">Dry Storage</option>
+				<option value="Freezer">Freezer</option>
+				<option value="Refrigerator">Refrigerator</option>
+				<option value="Dry">Dry Storage</option>
 			</select>
 		</div>
 		<div class="col form-floating">
