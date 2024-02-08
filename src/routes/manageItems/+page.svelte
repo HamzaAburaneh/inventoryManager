@@ -31,6 +31,14 @@
 		items = await getItems();
 	});
 
+	$: sortIcon = (column) => {
+		if (currentSortColumn === column) {
+			return sortAscending ? '▲' : '▼';
+		}
+		// Return a default icon for all columns, not just the active one
+		return '↕';
+	};
+
 	async function handleAdd() {
 		const itemWithoutId = {
 			name: name,
@@ -304,12 +312,24 @@
 	<table class="table">
 		<thead>
 			<tr>
-				<th on:click={() => sortBy('name')}>Name</th>
-				<th on:click={() => sortBy('barcode')}>Barcode</th>
-				<th on:click={() => sortBy('count')}>Count</th>
-				<th on:click={() => sortBy('lowCount')}>LowCount</th>
-				<th on:click={() => sortBy('cost')}>Cost</th>
-				<th on:click={() => sortBy('storageType')}>Storage Type</th>
+				<th class="header" on:click={() => sortBy('name')}
+					>Name <span class="sort-icon">{sortIcon('name')}</span></th
+				>
+				<th class="header" on:click={() => sortBy('barcode')}
+					>Barcode <span class="sort-icon">{sortIcon('barcode')}</span></th
+				>
+				<th class="header" on:click={() => sortBy('count')}
+					>Count <span class="sort-icon">{sortIcon('count')}</span></th
+				>
+				<th class="header" on:click={() => sortBy('lowCount')}
+					>LowCount <span class="sort-icon">{sortIcon('lowCount')}</span></th
+				>
+				<th class="header" on:click={() => sortBy('cost')}
+					>Cost <span class="sort-icon">{sortIcon('cost')}</span></th
+				>
+				<th class="header" on:click={() => sortBy('storageType')}
+					>Storage Type <span class="sort-icon">{sortIcon('storageType')}</span></th
+				>
 				<th />
 			</tr>
 
@@ -364,9 +384,36 @@
 </div>
 
 <style>
+	table {
+		table-layout: fixed; /* This can help stabilize column widths */
+		width: 100%;
+	}
 	.editable-cell:hover {
 		background-color: #b3ddff;
 		/* A light grey color */
+	}
+	.sort-icon {
+		display: none;
+		margin-left: 5px;
+	}
+
+	.header {
+		position: relative;
+		border: 2px solid transparent; /* Invisible border */
+	}
+	.header:hover::after {
+		content: '';
+		position: absolute;
+		left: 0;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		border: 4px solid black;
+		pointer-events: none; /* Ensures the pseudo-element doesn't interfere with click events */
+	}
+
+	.header:hover .sort-icon {
+		display: inline !important;
 	}
 
 	/* can you make the css of the second table row none bold */
