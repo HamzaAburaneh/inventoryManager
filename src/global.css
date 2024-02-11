@@ -1,0 +1,11 @@
+/* src/global.css */
+
+/* Regular mode */
+.bg-custom {
+    background-color: #ffffff;
+}
+
+/* Dark mode */
+.dark .bg-custom {
+    background-color: #333333;
+}

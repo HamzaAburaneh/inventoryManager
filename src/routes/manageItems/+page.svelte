@@ -258,6 +258,9 @@
 	href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
 />
 <div class="container mt-4">
+	<div class="bg-custom">
+		<!-- Content here will have a white background in light mode and a dark background in dark mode -->
+	</div>
 	<div class="row g-3 mb-3">
 		<div class="col form-group">
 			<label for="name" class="form-label">Name</label>

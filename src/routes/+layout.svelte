@@ -1,7 +1,8 @@
 <script>
+	import 'flowbite';
 	import 'flowbite/dist/flowbite.css';
-
-	let isDarkMode = false; // Default mode, can also use system preference
+	import '../global.css';
+	let isDarkMode = false;
 
 	// Function to toggle dark mode
 	function toggleDarkMode() {
@@ -14,9 +15,5 @@
 	}
 </script>
 
-<!-- Dark Mode Toggle Button -->
 <button on:click={toggleDarkMode}>Toggle Dark Mode</button>
-
-<!-- Layout's Main Content -->
-<!-- This will render the content of the page that uses this layout -->
 <slot />
