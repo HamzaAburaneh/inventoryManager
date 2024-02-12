@@ -258,7 +258,6 @@
 	rel="stylesheet"
 	href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
 />
-<body class="bg-black">
 <div class="container mt-4 bg-red-300 dark:bg-slate-800">
 	<div class="row g-3 mb-3">
 		<div class="col form-group">
@@ -384,7 +383,6 @@
 		</tbody>
 	</table>
 </div>
-</body>
 
 <style>
 	table {
