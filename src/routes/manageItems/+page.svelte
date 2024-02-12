@@ -384,7 +384,7 @@
 	</table>
 </div>
 
-<style>
+<!-- <style>
 	table {
 		table-layout: fixed; /* This can help stabilize column widths */
 		width: 100%;
@@ -422,4 +422,4 @@
 		font-weight: normal;
 		font-size: smaller;
 	}
-</style>
+</style> -->
